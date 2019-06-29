@@ -6,6 +6,8 @@
     <modules>
         <module>proxy-protocol</module>
         <module>proxy-common</module>
+        <module>proxy-client</module>
+        <module>proxy-server</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
