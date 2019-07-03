@@ -5,6 +5,8 @@ import com.noisy.flappy.protocol.IdleCheckHandler;
 import com.noisy.flappy.protocol.ProxyMessageDecoder;
 import com.noisy.flappy.protocol.ProxyMessageEncoder;
 import com.noisy.flappy.server.confg.ProxyConfig;
+import com.noisy.flappy.server.handlers.ServerChannelHandler;
+import com.noisy.flappy.server.handlers.UserChannelHandler;
 import com.noisy.flappy.server.metrics.handler.BytesMetricsHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;

@@ -1,6 +1,7 @@
 package com.noisy.flappy.server.handlers;
 
 import com.noisy.flappy.protocol.ProxyMessage;
+import com.noisy.flappy.server.ProxyChannelManager;
 import com.noisy.flappy.server.confg.ProxyConfig;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,7 +15,7 @@ import java.util.List;
  * @date 2019/6/29
  */
 @Slf4j
-public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessage>{
+public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ProxyMessage proxyMessage) throws Exception {
         log.debug("ProxyMessage received {}", proxyMessage.getType());
@@ -39,12 +40,26 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
         }
     }
 
+    private void handleTransferMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
+    }
+
+    private void handleDisconnectMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
+    }
+
+    private void handleConnectMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
+    }
+
+    private void handleHeartbeatMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
+    }
+
+
     /**
      * 认证处理逻辑
+     *
      * @param ctx
      * @param proxyMessage
      */
-    private void handleAuthMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage){
+    private void handleAuthMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
         String clientKey = proxyMessage.getUri();
         List<Integer> ports = ProxyConfig.getInstance().getClientInetPorts(clientKey);
         if (ports == null) {
@@ -53,7 +68,15 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
             return;
         }
 
-        Channel channel =
+        Channel channel = ProxyChannelManager.getCmdChannel(clientKey);
+        if (channel != null) { // channel已经建立完毕
+            log.warn("exist channel for key {}, {}", clientKey, channel);
+            ctx.channel().close();
+            return;
+        }
+        log.info("set port => channel, {}, {}, {}", clientKey, ports, ctx.channel());
+        ProxyChannelManager.addCmdChannel(ports, clientKey, ctx.channel());
+
     }
 
 }
