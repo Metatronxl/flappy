@@ -14,6 +14,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.net.BindException;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
  * @date 2019/6/28
  */
 @Slf4j
+@Component
 public class ProxyServerContainer implements Container, ProxyConfig.ConfigChangedListener {
 
     /**

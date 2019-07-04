@@ -1,8 +1,6 @@
 
 # server config
-server.address: "127.0.0.1"
 server.port: 5598
 
-#ip_segments  ip_list
-input_type: ip_segments
 
+logging.level.org.springframework.boot.autoconfigure: ERROR
