@@ -39,14 +39,22 @@ public class ClientChannelManager {
 
     private static Config config = Config.getInstance();
 
+    /**
+     * 连接池复用
+     *
+     * 每有一个连接请求，客户端和代理客户服务端都会有一条单独的链接请求
+     * 这里将所有的链接请求放进连接池中，方便连接池的复用
+     * @param bootstrap
+     * @param borrowListener
+     */
     public static void borrowProxyChannel(Bootstrap bootstrap, final ProxyChannelBorrowListener borrowListener) {
-
+        //从连接池中取出一条channel
         Channel channel = proxyChannelPool.poll();
         if (channel != null) {
             borrowListener.success(channel);
             return;
         }
-
+        // 如果连接池为空，则新建一个连接
         bootstrap.connect(config.getStringValue("server.host"), config.getIntValue("server.port")).addListener(new ChannelFutureListener() {
 
             @Override

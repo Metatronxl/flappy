@@ -1,4 +1,4 @@
 logging.level.org.springframework.boot.autoconfigure: ERROR
 
 # server config
-server.port: 5598
+server.port: 5599

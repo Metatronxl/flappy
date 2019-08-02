@@ -1,6 +1,6 @@
 
 # server config
-server.port: 5598
+server.port: 5599
 
 # remove CONDITION EVALUATION report
 logging.level.org.springframework.boot.autoconfigure: ERROR

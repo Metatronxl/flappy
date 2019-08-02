@@ -41,7 +41,7 @@ public class ProxyChannelManager {
 
     private static Map<String, Channel> cmdChannels = new ConcurrentHashMap<>();
 
-    //TODO 在何时执行？？？
+    //TODO 配置更新时回调
     static {
         ProxyConfig.getInstance().addConfigChangedListener(new ProxyConfig.ConfigChangedListener() {
             /**

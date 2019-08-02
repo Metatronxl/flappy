@@ -69,6 +69,7 @@ public class ProxyServerContainer implements Container, ProxyConfig.ConfigChange
         });
 
         try {
+            //TODO remove server IP bind
             bootstrap.bind(ProxyConfig.getInstance().getServerBind(), ProxyConfig.getInstance().getServerPort());
             log.info("proxy server start on port " + ProxyConfig.getInstance().getServerPort());
         } catch (Exception ex) {

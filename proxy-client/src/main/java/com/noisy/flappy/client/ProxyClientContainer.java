@@ -18,6 +18,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 
@@ -26,6 +27,7 @@ import javax.net.ssl.SSLContext;
  * @date 2019/6/30
  */
 @Slf4j
+@Component
 public class ProxyClientContainer implements Container, ChannelStatusListener {
 
     private static final int MAX_FRAME_LENGTH = 1024 * 1024;
