@@ -148,6 +148,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
      * @param proxyMessage
      */
     private void handleAuthMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
+        log.info("handleAuth Test");
+        log.info("====>"+proxyMessage.getUri());
         String clientKey = proxyMessage.getUri();
         List<Integer> ports = ProxyConfig.getInstance().getClientInetPorts(clientKey);
         if (ports == null) {
