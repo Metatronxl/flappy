@@ -12,7 +12,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.print.DocFlavor;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author lei.X
@@ -53,9 +53,11 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
                 handleConnectMessage(ctx, proxyMessage);
                 break;
             case ProxyMessage.P_TYPE_TRANSFER:
-                handleTransferMessage(ctx,proxyMessage);
+                handleTransferMessage(ctx, proxyMessage);
+                break;
             case ProxyMessage.TYPE_DISCONNECT:
-                handleDisconnectMessage(ctx,proxyMessage);
+                handleDisconnectMessage(ctx, proxyMessage);
+                break;
 
             default:
                 break;
@@ -67,6 +69,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
 
     /**
      * 处理断开连接的逻辑
+     *
      * @param ctx
      * @param proxyMessage
      */
@@ -75,7 +78,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
         Channel realServerChannel = ctx.channel().attr(Constants.NEXT_CHANNEL).get();
         log.debug("handleDisconnectMessage, {}", realServerChannel);
 
-        if (realServerChannel != null){
+        if (realServerChannel != null) {
             ctx.channel().attr(Constants.NEXT_CHANNEL).set(null);
             ClientChannelManager.returnProxyChanel(ctx.channel());
             realServerChannel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
@@ -84,16 +87,16 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
 
     /**
      * 处理数据传输
+     *
      * @param ctx
      * @param proxyMessage
      */
     private void handleTransferMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
         Channel realServerChannel = ctx.channel().attr(Constants.NEXT_CHANNEL).get();
         if (realServerChannel != null) {
-
             ByteBuf buf = ctx.alloc().buffer(proxyMessage.getData().length);
             buf.writeBytes(proxyMessage.getData());
-            log.debug("write data to real server, {}",realServerChannel);
+            log.debug("write data to real server, {}", realServerChannel);
             realServerChannel.writeAndFlush(buf);
         }
 
@@ -102,8 +105,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
 
     /**
      * connect ip and port provided by server
-     *
-     *        example : 127.0.0.1:22 (lanInfo)
+     * <p>
+     * example : 127.0.0.1:22 (lanInfo)
      *
      * @param ctx
      * @param proxyMessage
@@ -134,12 +137,12 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
                     /**
                      * 为什么要采用cmdChannel（控制连接）和ctx.channel()  （真实数据的传输连接）
 
-                       Ans：1.这是因为如果所有的数据都走cmdChannel的话，一旦这是一个传输数据量较大的请求
-                       那么channel就会被堵死，在数据没有发送完毕之前无法再互相通信
-                            2. 单一的cmdChannel无法建立多用户机制（即无法新建窗口，创立一个新的连接）
+                     Ans：1.这是因为如果所有的数据都走cmdChannel的话，一旦这是一个传输数据量较大的请求
+                     那么channel就会被堵死，在数据没有发送完毕之前无法再互相通信
+                     2. 单一的cmdChannel无法建立多用户机制（即无法新建窗口，创立一个新的连接）
 
-                       所以我们采用连接池的方式，一方面，一个新的请求即创建一个新的ctx.channel(真实数据的传输连接)
-                       一方面将所有的channel放进连接池中，方便复用且减小创建新的channel的开销
+                     所以我们采用连接池的方式，一方面，一个新的请求即创建一个新的ctx.channel(真实数据的传输连接)
+                     一方面将所有的channel放进连接池中，方便复用且减小创建新的channel的开销
                      */
 
                     ClientChannelManager.borrowProxyChannel(proxyBootstrap, new ProxyChannelBorrowListener() {
@@ -184,8 +187,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
     public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
 
         Channel realServerChannel = ctx.channel().attr(Constants.NEXT_CHANNEL).get();
-        if (realServerChannel != null){
-            realServerChannel.config().setOption(ChannelOption.AUTO_READ,ctx.channel().isWritable());
+        if (realServerChannel != null) {
+            realServerChannel.config().setOption(ChannelOption.AUTO_READ, ctx.channel().isWritable());
         }
 
         super.channelWritabilityChanged(ctx);
@@ -194,6 +197,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
     /**
      * 因为连接分为cmdChannel（控制连接）和ctx.channel()  （真实数据的传输连接）
      * 所以在inActive的处理上需要分开
+     *
      * @param ctx
      * @throws Exception
      */
@@ -201,13 +205,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 
         //控制连接
-        if (ClientChannelManager.getCmdChannel() == ctx.channel()){
+        if (ClientChannelManager.getCmdChannel() == ctx.channel()) {
             ClientChannelManager.setCmdChannel(null);
             ClientChannelManager.clearRealServerChannels();
             // 通知重新连接
             channelStatusListener.channelInactive(ctx);
-        }else{
-        // 数据传输连接
+        } else {
+            // 数据传输连接
             Channel realServerChannel = ctx.channel().attr(Constants.NEXT_CHANNEL).get();
             if (realServerChannel != null && realServerChannel.isActive()) {
                 realServerChannel.close();
@@ -223,8 +227,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
         log.error("exception caught", cause);
         super.exceptionCaught(ctx, cause);
     }
-
-
 
 
 }
