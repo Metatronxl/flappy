@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 
-PROJECT_NAME="proxy-kidd"
-JAR_NAME="proxy-kidd-1.0-SNAPSHOT.jar"
+PROJECT_NAME="proxy-server"
+JAR_NAME="proxy-server-0.0.1-SNAPSHOT.jar"
 
 
 function compile()
 {
 	echo "rebuild project"
-	mvn clean package -Pprod -Dmaven.test.skip=true
+	mvn clean package -Pprod install -pl proxy-server -am
 }
 
 function hasCodeUpdate()
@@ -47,7 +47,7 @@ function checkServer()
 
 	echo "start server"
 
-    nohup java -jar ./target/${JAR_NAME} >/dev/null 2>&1 &
+    nohup java -jar ./${PROJECT_NAME}/target/${JAR_NAME} >/dev/null 2>&1 &
 
 
     target=`ps -ef | grep "${PROJECT_NAME}" | grep "java" | grep -v "grep"`
@@ -79,8 +79,8 @@ if [ ! ${updateStatus} -eq 0 ] ;then
     echo "clean code"
     git clean -dfx
     echo "pull new code"
-    git pull
-#    pullNewCode
+#    git pull
+    pullNewCode
     compile
 fi
 checkServer
