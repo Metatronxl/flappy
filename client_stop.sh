@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 
-PROJECT_NAME="proxy-server"
-JAR_NAME="proxy-server-0.0.1-SNAPSHOT.jar"
+PROJECT_NAME="proxy-client"
+JAR_NAME="proxy-client-0.0.1-SNAPSHOT.jar"
 
 
 function compile()
@@ -72,16 +72,6 @@ function killServer(){
 }
 
 
-hasCodeUpdate
-updateStatus=$?
+killServer
 
-if [ ! ${updateStatus} -eq 0 ] ;then
-    killServer
-    echo "clean code"
-    git clean -dfx
-    echo "pull new code"
-#    git pull
-    pullNewCode
-    compile
-fi
-checkServer
+

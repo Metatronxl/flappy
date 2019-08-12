@@ -8,7 +8,7 @@ JAR_NAME="proxy-server-0.0.1-SNAPSHOT.jar"
 function compile()
 {
 	echo "rebuild project"
-	mvn clean package -Pprod install -pl proxy-server -am
+	mvn clean package -Pprod install -pl ${PROJECT_NAME} -am
 }
 
 function hasCodeUpdate()
