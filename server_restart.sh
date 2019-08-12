@@ -72,18 +72,16 @@ function killServer(){
 }
 
 
-function restart(){
-    hasCodeUpdate
-    updateStatus=$?
+hasCodeUpdate
+updateStatus=$?
 
-    if [ ! ${updateStatus} -eq 0 ] ;then
-        killServer
-        echo "clean code"
-        git clean -dfx
-        echo "pull new code"
-    #    git pull
-        pullNewCode
-        compile
-    fi
-    checkServer
-}
+if [ ! ${updateStatus} -eq 0 ] ;then
+    killServer
+    echo "clean code"
+    git clean -dfx
+    echo "pull new code"
+#    git pull
+    pullNewCode
+    compile
+fi
+checkServer
